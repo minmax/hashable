@@ -1,4 +1,4 @@
-from .tools import create_getters_list
+from .tools import create_getters_list, is_build_in_method
 
 
 __all__ = ['HashCodeBuilder']
@@ -6,11 +6,17 @@ __all__ = ['HashCodeBuilder']
 
 class HashCodeBuilder(object):
     @classmethod
-    def auto_generate(cls, attributes=None, methods=None):
+    def auto_generate(cls, hashable_cls, attributes=None, methods=None):
         getters_list = create_getters_list(attributes, methods)
+
+        with_super = not is_build_in_method(hashable_cls, '__hash__')
 
         def __hash__(self):
             hash_code_builder = cls()
+            if with_super:
+                hash_code_builder.append_super(
+                    super(hashable_cls, self).__hash__()
+                )
             for getter in getters_list:
                 value = getter(self)
                 hash_code_builder.append(value)

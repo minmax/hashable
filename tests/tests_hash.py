@@ -33,11 +33,30 @@ class TestHashable(TestCase):
 class TestOOPSCompatibility(TestCase):
     identifier = 789
 
-    def test_self_defined_methods_not_overridden(self):
-        @hashable(attributes='attr')
+    def test_self_defined_methods_overridden(self):
+        @hashable(attributes=['attr'])
         class SelfHashedCLS(object):
             attr = 1
+
             def __hash__(self):
                 return TestOOPSCompatibility.identifier
 
-        self.assertEqual(self.identifier, hash(SelfHashedCLS()))
+        self.assertNotEqual(self.identifier, hash(SelfHashedCLS()))
+
+    def test_super_hash_called(self):
+        @hashable(attributes=['name'])
+        class Base(object):
+            name = 'test'
+
+        @hashable(attributes=['value'])
+        class Inheritor(Base):
+            value = 123
+
+        base = Base()
+        inheritor = Inheritor()
+
+        self.assertNotEqual(hash(base), hash(inheritor))
+        self.assertNotEqual(base, inheritor)
+
+        self.assertEqual(hash(inheritor), hash(Inheritor()))
+        self.assertEqual(inheritor, Inheritor())

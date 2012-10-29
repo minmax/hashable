@@ -1,6 +1,5 @@
 from .equals_builder import EqualsBuilder
 from .hash_code_builder import HashCodeBuilder
-from .tools import is_build_in_method
 
 
 __all__ = [
@@ -10,20 +9,25 @@ __all__ = [
 
 
 def hashable(cls=None, attributes=None, methods=None):
+    _validate_attributes_and_methods(attributes, methods)
     def decorator(cls):
         cls = equality_comparable(cls, attributes, methods)
-        if is_build_in_method(cls, '__hash__'):
-            cls.__hash__ = HashCodeBuilder.auto_generate(attributes, methods)
+        cls.__hash__ = HashCodeBuilder.auto_generate(cls, attributes, methods)
         return cls
     return decorator if cls is None else decorator(cls)
 
 
 def equality_comparable(cls=None, attributes=None, methods=None):
+    _validate_attributes_and_methods(attributes, methods)
     def decorator(cls):
-        if is_build_in_method(cls, '__eq__'):
-            cls.__eq__ = EqualsBuilder.auto_generate(attributes, methods)
-
-        if is_build_in_method(cls, '__ne__'):
-            cls.__ne__ = EqualsBuilder.auto_ne_from_eq()
+        cls.__eq__ = EqualsBuilder.auto_generate(cls, attributes, methods)
+        cls.__ne__ = EqualsBuilder.auto_ne_from_eq()
         return cls
     return decorator if cls is None else decorator(cls)
+
+
+def _validate_attributes_and_methods(attributes, methods):
+    assert not isinstance(attributes, basestring), 'attributes must be list'
+    assert not isinstance(methods, basestring), 'methods must be list'
+
+    assert attributes or methods, 'attributes or methods must be NOT empty'
