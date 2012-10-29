@@ -1,4 +1,4 @@
-from .tools import create_getters_list, is_build_in_method
+from .tools import create_getters_list, get_super_not_buildin_method_or_none
 
 
 __all__ = ['EqualsBuilder']
@@ -28,7 +28,7 @@ class EqualsBuilder(object):
     def auto_generate(cls, eq_cls, attributes=None, methods=None):
         getters_list = create_getters_list(attributes, methods)
 
-        with_super = not is_build_in_method(eq_cls, '__eq__')
+        super_method = get_super_not_buildin_method_or_none(eq_cls, '__eq__')
 
         def __eq__(self, other):
             eq = cls(self, other)
@@ -37,8 +37,8 @@ class EqualsBuilder(object):
             if eq.is_same_instances():
                 return True
 
-            if with_super:
-                eq.append_super(super(eq_cls, self).__eq__(other))
+            if super_method is not None:
+                eq.append_super(super_method(self, other))
 
             for getter in getters_list:
                 self_val = getter(self)

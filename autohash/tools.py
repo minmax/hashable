@@ -10,11 +10,13 @@ def create_getters_list(attributes=None, methods=None):
     return getters_list
 
 
-def is_build_in_method(obj, name):
-    result = getattr(obj, name, None)
-    if result is None:
-        return False
-    return isinstance(result, build_in_methods_types)
+def get_super_not_buildin_method_or_none(obj, name):
+    method = getattr(obj, name, None)
+    if method is None:
+        return None
+    if isinstance(method, build_in_methods_types):
+        return None
+    return method
 
 
 class _C(object):
