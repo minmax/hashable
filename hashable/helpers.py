@@ -4,7 +4,7 @@ from .hash_code_builder import HashCodeBuilder
 
 __all__ = [
     'hashable',
-    'equality_comparable',
+    'equalable',
 ]
 
 
@@ -12,13 +12,13 @@ def hashable(cls=None, attributes=None, methods=None):
     _validate_attributes_and_methods(attributes, methods)
 
     def decorator(cls):
-        cls = equality_comparable(cls, attributes, methods)
+        cls = equalable(cls, attributes, methods)
         cls.__hash__ = HashCodeBuilder.auto_generate(cls, attributes, methods)
         return cls
     return decorator if cls is None else decorator(cls)
 
 
-def equality_comparable(cls=None, attributes=None, methods=None):
+def equalable(cls=None, attributes=None, methods=None):
     _validate_attributes_and_methods(attributes, methods)
 
     def decorator(cls):
