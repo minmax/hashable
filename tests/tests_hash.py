@@ -1,5 +1,5 @@
 from unittest import TestCase
-from autohash import hashable
+from hashable import hashable
 
 
 class NotHashable(object):
