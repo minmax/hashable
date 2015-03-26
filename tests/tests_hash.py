@@ -29,7 +29,6 @@ class TestHashable(TestCase):
         self.assertIsNotNone(hash(cls(1)))
 
 
-
 class TestOOPSCompatibility(TestCase):
     identifier = 789
 

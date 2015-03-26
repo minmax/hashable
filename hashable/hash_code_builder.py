@@ -9,7 +9,10 @@ class HashCodeBuilder(object):
     def auto_generate(cls, hashable_cls, attributes=None, methods=None):
         getters_list = create_getters_list(attributes, methods)
 
-        super_method = get_super_not_buildin_method_or_none(hashable_cls, '__hash__')
+        super_method = get_super_not_buildin_method_or_none(
+            hashable_cls,
+            '__hash__'
+        )
 
         def __hash__(self):
             hash_code_builder = cls()
@@ -21,12 +24,16 @@ class HashCodeBuilder(object):
             return hash_code_builder.get_hash_code()
         return __hash__
 
-    def __init__(self, initial_non_zero_odd_number=17, multiplier_non_zero_odd_number=37):
-        assert initial_non_zero_odd_number != 0 and initial_non_zero_odd_number % 2 != 0
-        assert multiplier_non_zero_odd_number != 0 and multiplier_non_zero_odd_number % 2 != 0
+    def __init__(self, initial=17, multiplier=37):
+        """
+        :param initial: must be non zero odd number
+        :param multiplier: must be non zero odd number
+        """
+        assert initial != 0 and initial % 2 != 0
+        assert multiplier != 0 and multiplier % 2 != 0
 
-        self._total = initial_non_zero_odd_number
-        self._constant = multiplier_non_zero_odd_number
+        self._total = initial
+        self._constant = multiplier
 
     def append_super(self, super_hash_code):
         self._total = self._total * self._constant + super_hash_code

@@ -10,6 +10,7 @@ __all__ = [
 
 def hashable(cls=None, attributes=None, methods=None):
     _validate_attributes_and_methods(attributes, methods)
+
     def decorator(cls):
         cls = equality_comparable(cls, attributes, methods)
         cls.__hash__ = HashCodeBuilder.auto_generate(cls, attributes, methods)
@@ -19,6 +20,7 @@ def hashable(cls=None, attributes=None, methods=None):
 
 def equality_comparable(cls=None, attributes=None, methods=None):
     _validate_attributes_and_methods(attributes, methods)
+
     def decorator(cls):
         cls.__eq__ = EqualsBuilder.auto_generate(cls, attributes, methods)
         cls.__ne__ = EqualsBuilder.auto_ne_from_eq()
